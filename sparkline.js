@@ -42,13 +42,22 @@ var sparkline = (function() {
     return parseInt(styles['fontSize'],10) || 18;
   }
 
-  /**
-   *
-   **/
+  // This is the working horse function
+  // sel:   css style selector of the element to which the 
+  //        sparkline will be attached to
+  // data:  array of numeric values
+  // highlight_pt: index of the point which should be highlighted with
+  //        a red dot.
   function spark(sel, data, highlight_pt ) {
 
-    var spark_node = document.querySelector(sel);
-    if (!spark_node) throw Error("Couldn't find " + sel );
+    var spark_node;
+    if (typeof sel === 'string') {
+      spark_node = document.querySelector(sel);
+      if (!spark_node) throw Error("Couldn't find " + sel );
+    }
+    else {
+      spark_node = sel;
+    }
 
     var no_pts = data.length;
     if (!no_pts) throw Error('No data provided.');
@@ -82,8 +91,19 @@ var sparkline = (function() {
 
   }
 
+  function bootstrap() {
+    var sparks = document.querySelectorAll('span.spark');
+    Array.prototype.forEach.call(sparks,function(span) {
+      var data = span.getAttribute('data').split(',').map(function(d) {
+        return parseFloat(d);
+      });
+      spark(span, data);
+    });
+  }
+
   return {
-    spark: spark
+    spark: spark,
+    bootstrap: bootstrap
   };
 
 })();
