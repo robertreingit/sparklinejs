@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Addind a sparkline to text</title>
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+  <style>
+    body {
+      font-family: 'Raleway', sans-serif;
+      background-color: #fffff8;
+      color: #111111;
+    }
+    main {
+      margin-left: 50px;
+      max-width: 400px;
+    }
+    svg path {
+      fill: none;
+      stroke: #111111;
+    }
+    svg circle {
+      fill: red;
+    }
+    a {
+      color: red;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main>
+  <h1>Sparklines</h1>
+  <p>
+  Inspired by ideas from <a href="http://www.edwardtufte.com/bboard/q-and-a-fetch-msg?msg_id=0001OR" target="blank">Edward Tufte</a>
+  </p>
+  <p>
+  „Do you see any Teletubbies in here? Do you see a slender plastic tag clipped to my shirt with my name printed on it? Do you see a little Asian child with a blank expression on his face sitting outside on a mechanical helicopter that shakes when you put quarters in it? 
+  <span id="spark"></span>
+  
+  No? Well, that's what you see at a toy store. And you must think you're in a toy store, because you're here shopping for an infant named Jeb.“
+  </p>
+  <p>
+  „Bacon ipsum dolor sit amet doner meatball jowl short ribs, chicken prosciutto salami frankfurter. <span id="sparkpig"></span>Pig drumstick turducken short ribs, brisket meatloaf ham hock shankle andouille corned beef strip steak. Venison ham bresaola strip steak. Pork belly ribeye prosciutto t-bone.“
+  </p>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    function draw_data() {
+      var data = [],
+          no_pts = 20;
+
+      for ( var i = 0; i < no_pts; i++) 
+        data.push(Math.random() + Math.sin(i/10));
+      sparkline.spark('span#spark', data);
+
+      var data2 = [0,10,10,20,20,30,30,40];
+      sparkline.spark('span#sparkpig',data2, 3);
+    }
+    draw_data();
+  </script>
+</body>
+</html>
