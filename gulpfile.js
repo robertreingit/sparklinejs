@@ -4,9 +4,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename');
 
-gulp.task('default', function() {
-  console.log('default');
-});
+gulp.task('default',['minify']); 
 
 gulp.task('minify', function() {
   return gulp.src('sparkline.js')
