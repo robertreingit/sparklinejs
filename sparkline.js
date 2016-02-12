@@ -37,6 +37,10 @@ var sparkline = (function() {
     return Math.max.apply(null, data);
   }
 
+  var mean = function(data) {
+    return data.reduceRight(function(a,b) { return a+b; })/data.length;
+  }
+
   var get_height = function(sel) {
     var styles = window.getComputedStyle(sel, null);
     return parseInt(styles['fontSize'],10) || 18;
@@ -46,14 +50,15 @@ var sparkline = (function() {
   var quartile = function(data) {
     var data_cp = data.slice().sort(function(a,b) { return a-b; });
     var no_pts = data_cp.length;
+    var q1, q2;
     if (no_pts % 2) { // odd number of data pts
       q1 = Math.floor((no_pts+3)/4);
-      q2 = Math.floor((3*n+3)/4);
+      q2 = Math.floor((3*no_pts+3)/4);
 
     }
     else { // even number of data pts
       q1 = Math.floor((no_pts+2)/4);
-      q2 = Math.floor((3*n+2)/4);
+      q2 = Math.floor((3*no_pts+2)/4);
     }
     return [data_cp[q1],data_cp[q2]];
   };
@@ -92,6 +97,8 @@ var sparkline = (function() {
     var x = mapper(0,no_pts-1, margin, width-margin);
     var y = mapper(min(data), max(data), height-margin, margin);
     var d = path_generator(data, x, y);
+
+    var qu = quartile(data);
 
     var path = create_SVG('path');
     add_SVG_attributes(path, {'d': d});
