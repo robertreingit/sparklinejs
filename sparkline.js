@@ -42,6 +42,22 @@ var sparkline = (function() {
     return parseInt(styles['fontSize'],10) || 18;
   }
 
+  // Calculates the quartiles using Tukey's method
+  var quartile = function(data) {
+    var data_cp = data.slice().sort(function(a,b) { return a-b; });
+    var no_pts = data_cp.length;
+    if (no_pts % 2) { // odd number of data pts
+      q1 = Math.floor((no_pts+3)/4);
+      q2 = Math.floor((3*n+3)/4);
+
+    }
+    else { // even number of data pts
+      q1 = Math.floor((no_pts+2)/4);
+      q2 = Math.floor((3*n+2)/4);
+    }
+    return [data_cp[q1],data_cp[q2]];
+  };
+
   // This is the working horse function
   // sel:   css style selector of the element to which the 
   //        sparkline will be attached to
