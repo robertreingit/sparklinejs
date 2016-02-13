@@ -14,17 +14,23 @@ var sparkline = (function() {
     }
   }
 
-  var mapper = function(x0,x1,y0,y1) {
-    return function(x) {
+  var Scale = function(x0,x1,y0,y1) {
+    var transform = function(x) {
       return (x - x0)/(x1-x0) * (y1-y0) + y0;
+    }
+    return function apply(data) {
+      return Array.isArray(data) ? 
+        data.map(function(d) { return transform(d); }) :
+        transform(data);
     }
   };
 
-  var path_generator = function(data, x, y) {
+  //
+  var path_generator = function(x, y) {
     var path = 'M';
-    path += x(0) + ',' + y(data[0]);
-    data.slice(1).forEach(function(d,i) {
-      path += 'L' + x(i+1) + ',' + y(d);
+    path += x[0] + ',' + y[0];
+    y.slice(1).forEach(function(d,i) {
+      path += 'L' + x[i+1] + ',' + d;
     });
     return path;
   };
@@ -63,6 +69,12 @@ var sparkline = (function() {
     return [data_cp[q1],data_cp[q2]];
   };
 
+  var range = function(d) {
+    var r = [];
+    for (var i = 0; i < d; i += 1) r.push(i);
+    return r;
+  }
+
   // This is the working horse function
   // sel:   css style selector of the element to which the 
   //        sparkline will be attached to
@@ -94,9 +106,12 @@ var sparkline = (function() {
     add_SVG_attributes(svg, {'width': width, 'height': height});
     spark_node.appendChild(svg);
 
-    var x = mapper(0,no_pts-1, margin, width-margin);
-    var y = mapper(min(data), max(data), height-margin, margin);
-    var d = path_generator(data, x, y);
+    var xScale = Scale(0,no_pts-1, margin, width-margin);
+    var yScale = Scale(min(data), max(data), height-margin, margin);
+    var x = xScale(range(no_pts));
+    var y = yScale(data);
+
+    var d = path_generator(x, y);
 
     var qu = quartile(data);
 
@@ -106,8 +121,8 @@ var sparkline = (function() {
 
     var circle = create_SVG('circle');
     add_SVG_attributes(circle, {
-      cx: x(hl_idx),
-      cy: y(data[hl_idx]),
+      cx: x[hl_idx],
+      cy: y[hl_idx],
       r: 2
     });
     svg.appendChild(circle);
