@@ -15,7 +15,7 @@ var sparkline = (function() {
   }
 
   var Scale = function(x0,x1,y0,y1) {
-    var transform = function(x) {
+    function transform(x) {
       return (x - x0)/(x1-x0) * (y1-y0) + y0;
     }
     return function apply(data) {
@@ -108,12 +108,20 @@ var sparkline = (function() {
 
     var xScale = Scale(0,no_pts-1, margin, width-margin);
     var yScale = Scale(min(data), max(data), height-margin, margin);
+
     var x = xScale(range(no_pts));
     var y = yScale(data);
-
     var d = path_generator(x, y);
 
     var qu = quartile(data);
+    var qu_x = xScale([0,no_pts-1,no_pts-1,0]);
+    var qu_y = yScale([qu[1],qu[1],qu[0],qu[0]]);
+    var qu_d = path_generator(qu_x, qu_y);
+    qu_d += 'Z';
+
+    var path_quart = create_SVG('path');
+    add_SVG_attributes(path_quart, {'d': qu_d, 'class': 'quartile'});
+    svg.appendChild(path_quart);
 
     var path = create_SVG('path');
     add_SVG_attributes(path, {'d': d});
