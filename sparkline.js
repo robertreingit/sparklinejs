@@ -81,7 +81,7 @@ var sparkline = (function() {
   // data:  array of numeric values
   // highlight_pt: index of the point which should be highlighted with
   //        a red dot.
-  function spark(sel, data, highlight_pt ) {
+  function spark(sel, data, highlight_pt, quartile ) {
 
     var spark_node;
     if (typeof sel === 'string') {
@@ -143,6 +143,8 @@ var sparkline = (function() {
       var data = span.getAttribute('data').split(',').map(function(d) {
         return parseFloat(d);
       });
+      var show_quartile = span.getAttribute('data-quartile');
+      var highlight_idx = span.getAttribute('data-quartile');
       spark(span, data);
     });
   }
