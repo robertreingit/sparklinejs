@@ -29,9 +29,9 @@ var sparkline = (function() {
   var path_generator = function(x, y) {
     var path = 'M';
     path += x[0] + ',' + y[0];
-    y.slice(1).forEach(function(d,i) {
-      path += 'L' + x[i+1] + ',' + d;
-    });
+    path += y.slice(1).reduce(function(pre,curr,i) {
+      return pre + 'L' + x[i+1] + ',' + curr;
+    },'');
     return path;
   };
 
@@ -81,7 +81,7 @@ var sparkline = (function() {
   // data:  array of numeric values
   // highlight_pt: index of the point which should be highlighted with
   //        a red dot.
-  function spark(sel, data, highlight_pt, quartile ) {
+  function spark(sel, data, highlight_pt, show_quartile ) {
 
     var spark_node;
     if (typeof sel === 'string') {
