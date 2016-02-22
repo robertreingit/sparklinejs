@@ -95,7 +95,6 @@ var sparkline = (function() {
     var no_pts = data.length;
     if (!no_pts) throw Error('No data provided.');
 
-    var hl_idx = highlight_pt || no_pts - 1;
 
     var height = get_height(spark_node),
         ratio = 2,
@@ -127,13 +126,16 @@ var sparkline = (function() {
     add_SVG_attributes(path, {'d': d});
     svg.appendChild(path);
 
-    var circle = create_SVG('circle');
-    add_SVG_attributes(circle, {
-      cx: x[hl_idx],
-      cy: y[hl_idx],
-      r: 2
-    });
-    svg.appendChild(circle);
+    if (highlight_pt !== 'no') {
+      var hl_idx = highlight_pt || no_pts - 1;
+      var circle = create_SVG('circle');
+      add_SVG_attributes(circle, {
+        cx: x[hl_idx],
+        cy: y[hl_idx],
+        r: 2
+      });
+      svg.appendChild(circle);
+    }
 
   }
 
@@ -143,10 +145,24 @@ var sparkline = (function() {
       var data = span.getAttribute('data').split(',').map(function(d) {
         return parseFloat(d);
       });
+      var no_pts = data.length;
       var show_quartile = span.getAttribute('data-quartile');
-      var highlight_idx = span.getAttribute('data-highlight');
-      console.log(highlight_idx);
-      spark(span, data);
+      
+      // process highlight
+      var hl = span.getAttribute('data-highlight');
+      if (hl === null) {
+        // No instruction given. Default is to highlight the last point
+        hl = data.lenght - 1;
+      }
+      else {
+        if (hl !== 'no') {
+          hl = parseInt(hl,10);
+          if (hl < 0 || hl >= data.length) 
+            throw Error("Highlight index out of bounds");
+        }
+      }
+
+      spark(span, data, hl);
     });
   }
 
