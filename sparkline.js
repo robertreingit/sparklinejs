@@ -144,7 +144,8 @@ var sparkline = (function() {
         return parseFloat(d);
       });
       var show_quartile = span.getAttribute('data-quartile');
-      var highlight_idx = span.getAttribute('data-quartile');
+      var highlight_idx = span.getAttribute('data-highlight');
+      console.log(highlight_idx);
       spark(span, data);
     });
   }
