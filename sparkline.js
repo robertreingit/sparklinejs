@@ -81,6 +81,8 @@ var sparkline = (function() {
   // data:  array of numeric values
   // highlight_pt: index of the point which should be highlighted with
   //        a red dot.
+  // show_quartile: boolean controlling quartile showing
+  //        if not present no quartile will be drawn.
   function spark(sel, data, highlight_pt, show_quartile ) {
 
     var spark_node;
@@ -91,6 +93,7 @@ var sparkline = (function() {
     else {
       spark_node = sel;
     }
+    var show_q = show_quartile || false;
 
     var no_pts = data.length;
     if (!no_pts) throw Error('No data provided.');
@@ -112,15 +115,17 @@ var sparkline = (function() {
     var y = yScale(data);
     var d = path_generator(x, y);
 
-    var qu = quartile(data);
-    var qu_x = xScale([0,no_pts-1,no_pts-1,0]);
-    var qu_y = yScale([qu[1],qu[1],qu[0],qu[0]]);
-    var qu_d = path_generator(qu_x, qu_y);
-    qu_d += 'Z';
+    if (show_q) {
+      var qu = quartile(data);
+      var qu_x = xScale([0,no_pts-1,no_pts-1,0]);
+      var qu_y = yScale([qu[1],qu[1],qu[0],qu[0]]);
+      var qu_d = path_generator(qu_x, qu_y);
+      qu_d += 'Z';
 
-    var path_quart = create_SVG('path');
-    add_SVG_attributes(path_quart, {'d': qu_d, 'class': 'quartile'});
-    svg.appendChild(path_quart);
+      var path_quart = create_SVG('path');
+      add_SVG_attributes(path_quart, {'d': qu_d, 'class': 'quartile'});
+      svg.appendChild(path_quart);
+    }
 
     var path = create_SVG('path');
     add_SVG_attributes(path, {'d': d});
@@ -139,6 +144,8 @@ var sparkline = (function() {
 
   }
 
+  // Main function to control sparklines from HTML.
+  //
   function bootstrap() {
     var sparks = document.querySelectorAll('span.spark');
     Array.prototype.forEach.call(sparks,function(span) {
@@ -146,7 +153,8 @@ var sparkline = (function() {
         return parseFloat(d);
       });
       var no_pts = data.length;
-      var show_quartile = span.getAttribute('data-quartile');
+
+      var sq = 'data-quartile' in span.attributes;
       
       // process highlight
       var hl = span.getAttribute('data-highlight');
@@ -162,7 +170,7 @@ var sparkline = (function() {
         }
       }
 
-      spark(span, data, hl);
+      spark(span, data, hl, sq);
     });
   }
 
