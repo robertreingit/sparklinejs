@@ -1,0 +1,12 @@
+svg path {
+  fill: none;
+  stroke: #111111;
+}
+svg circle {
+  fill: red;
+}
+svg path.quartile {
+  fill: #ccc;
+  stroke: none;
+}
+
